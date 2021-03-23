@@ -1,0 +1,26 @@
+\documentclass{article}
+
+\input{colors.tex}
+\input{preamble.tex}
+
+\title{\thesistitle} 
+\author{\thesisauthor} 
+\date{\thedate} 
+
+\begin{document}
+
+    \input{frontpage.tex}
+
+    % Add roman numerals to TOC-pages and Arabic numerals to all other pages
+    \pagenumbering{roman} \thispagestyle{plain}
+    \tableofcontents
+    \clearpage
+    \pagenumbering{arabic} \setcounter{page}{1}
+
+    % Subfiles start
+    \section{Hello}
+    
+    % Subfiles end 
+
+
+\end{document}
