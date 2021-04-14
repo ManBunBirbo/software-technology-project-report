@@ -1,7 +1,7 @@
 \documentclass{article}
 
-\input{colors.tex}
-\input{preamble.tex}
+\input{tex/colors.tex}
+\input{tex/preamble.tex}
 
 \title{\thesistitle} 
 \author{\thesisauthor} 
@@ -17,11 +17,15 @@
     \clearpage
     \pagenumbering{arabic} \setcounter{page}{1}
 
-    % Subfiles start
-    \input{status-reports/status-report-1.5.tex}
-    \input{sec/01-introduction.tex}
-    \input{sec/02-problem-analysis.tex}
-    % Subfiles end 
+    % Sub-files start
+    \input{sec/introduction.tex}
+    \input{sec/problem-analysis.tex}
+    \input{sec/design.tex}
+    \input{sec/implementation.tex}
+    \input{sec/test.tex}
+    \input{sec/project-management.tex}
+    \input{sec/conclusion.tex}
+    % Sub-files end 
 
 
 \end{document}
