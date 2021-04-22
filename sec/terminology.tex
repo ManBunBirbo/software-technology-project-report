@@ -1,0 +1,54 @@
+% !TEX root = ../main.tex
+
+\section{Terminology} \label{sec:terminology}
+
+The terminology used in this report is specified below. The terminology differs
+a bit from \\ \cite{doerr2017a}. It takes inspiration from other sources
+(\cite{thede2014,tutpoint}) and follows a more biological narrative.
+
+\begin{description}
+
+    \item[Individual] An individual consists of a solution string. It is one
+    possible solution to the problem. 
+
+    \item[Genome] An individual consists of a genome. A genome is an array of
+    genes. The genome \textit{is} the solution string. 
+
+    \item[Allele] A gene's value is called an allele. In this project, the
+    allele is thus responsible for holding the information of whether or not a
+    certain gene is a break point. An allele is the value at a certain gene in
+    the genome/solution string. 
+
+    \item[Population] A group of individuals. 
+
+    \item[Fitness function] A function that measures how well the solution from
+    an individual fits with the data. This can be any function relevant for a
+    particular problem. 
+
+    \item[Parent and offspring individual] Since genetic algorithms mimic
+    evolution, procedures must include parent and offspring individuals. A
+    parent individual is a parent to the offspring individual, meaning that any
+    procedure must take one (or two) parent individual(s) and the procedure
+    creates an offspring. 
+
+    \item[Crossover (Procedure)] Crossover-procedures takes two parent
+    individuals and creates an offspring from the genomes of the two parents.
+    This project will incorporate \textit{one-point crossover} and
+    \textit{uniform crossover}. 
+    
+    One-point crossover extracts the genes in the interval $0$ to a random gene
+    $i - 1$ from the first parent. Then, it appends the genome with the genes
+    $i$ to the last gene $n - 1$ from the second parent. Thus, the offspring's
+    genome consists of the first $i$ genes from parent one and $n-i$ last genes
+    from parent two. 
+
+    Uniform crossover is more simple. For each gene in the offspring's genome,
+    there is a fifty-fifty chance whether it will be the gene from parent one or
+    the gene from parent two. 
+
+    \item[Mutation (Procedure)] Just like the corona virus, the genome of an
+    individual can mutate. It means, that for any gene, there is a random chance
+    that the allele will change. In this case, the change will be either
+    creating break points or removing them. 
+
+\end{description}

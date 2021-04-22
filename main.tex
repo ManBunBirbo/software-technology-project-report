@@ -19,7 +19,8 @@
 
     % Sub-files start
     \input{sec/introduction.tex}
-    \input{sec/problem-analysis.tex}
+    \input{sec/goals.tex}
+    \input{sec/terminology.tex}
     \input{sec/design.tex}
     \input{sec/implementation.tex}
     \input{sec/test.tex}
@@ -27,5 +28,10 @@
     \input{sec/conclusion.tex}
     % Sub-files end 
 
+    % BibTeX
+    \clearpage
+    \addcontentsline{toc}{section}{References}
+    \bibliographystyle{apalike}
+    \bibliography{./sources.bib}
 
 \end{document}
