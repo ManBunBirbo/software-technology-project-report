@@ -1,0 +1,45 @@
+% !TEX root = ../main.tex
+
+\section{Statusrapport 2 (Deadline: 7. maj 2021)} \label{sec:status-rapport-2}
+
+\subsection{Tidsplan}
+
+Tidsplanen fra min Statusrapport 1.5 (sektion~\ref{sec:status-report-1.5})
+følges nogenlunde. På dette tidspunkt skulle GUI være nogenlunde
+færdigimplementeret, og jeg skulle være begyndt på at optimere algoritmen ved
+brug af \textit{range trees}. Det tog en del længere tid at vise firkanter på en
+graf i JavaFX end jeg havde regnet med, så jeg er endnu ikke begyndt at optimere
+på algoritme. Så jeg er en smule bag tidsplanen. 
+
+Tidsplanen er dog ikke et kæmpe problem, da jeg kun har én eksamen i maj. Jeg
+har kun 15 ECTS-point dette 13-ugers, hvor 10 af dem er projektkurser. Derfor
+vil jeg have tid i eksamensperioden til at kigge lidt på fagprojekt. 
+
+\subsection{Algoritmen}
+
+I Statusrapport 1.5 konkluderede jeg, at algoritmen spillede. Hvad jeg ikke
+vidste var, at \textit{mutation}-metoden ikke blev kaldt nogensinde. Den skaber
+nu nogle problemer med at generere for mange break points. For nogle
+\textit{time series} er "den bedste løsning" den \textit{solution string}, hvor
+næsten alle punkter er markeret som et break point. Det er ikke særlig godt, og
+det kan måske bare rettes med at ændre fitness-funktionen: Implementere en anden
+udgave af $p(k)$ fra \cite{doerr2017a}. Så algoritmen spiller ikke fuldstændig
+lige nu. 
+
+\subsection{Fremadrettet}
+
+Jeg har kun brugt halvdelen af den normerede tid på kurset. Jeg har nogle gange
+en følelse af, at jeg er bagud, men jeg har jo indtil videre kun brugt halvdelen
+af den allokerede tid til kurset. Jeg har stadig masser af tid i 3-ugers til at
+færdiggøre projektet. Det skal jeg huske på. 
+
+Jeg glemmer at skrive på rapporten. Det er jo nogle gange sjovere at sidde og
+kode, end det er at skrive på rapporten. Men rapporten \textit{er} virkelig
+vigtig. Jeg skal huske at have rapporten som en prioritet. 
+
+Jeg er lidt i tvivl om hvordan programmet skal behandle flere dimensioner. Jeg
+har ikke leget rundt med det endnu. Hvis jeg har tid, kunne det være super fedt
+at bruge det til noget, men det kan være, at jeg kun læser én dimension ind fra
+datafiler (og gør brugeren opmærksom på det). 
+
+\newpage
