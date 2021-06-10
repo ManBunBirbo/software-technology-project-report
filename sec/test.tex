@@ -2,6 +2,27 @@
 
 \section{Test} \label{sec:test}
 
+For this project, not many tests where performed. The tests where only for
+smaller components as the structural breaks algorithm by design is random and
+the outcome is not the same each time. The tests are only black box tests. 
+
+Another reason for the lack of tests was simply the scope of the project. It is
+not a very large project, and the amount of testable components is small. But a
+few tests are performed and can serve as a proof of concept. 
+
+\subsection{Components}
+
+Tests were performed on the individual components to make sure they worked as
+intended. This was both the case for custom data structures and other objects. 
+
+For the range trees, a few tests were carried out to check that the queries
+returned the correct values. This was useful for making sure the data
+structure worked as intended.  
+
+Other tests were also carried out for the objects like \texttt{Individual} and
+\texttt{Genome} while they were being implemented. For the genome, it was
+important that the break point indexes are in increasing order. 
+
 \subsection{Running time} \label{sec:test-running-time}
 
 For testing running times, a simple class \texttt{runTimeTimer} was made. It has

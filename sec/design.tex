@@ -7,27 +7,28 @@ goals pose different problems. These problems (and especially their solutions)
 is best analyzed when also discussing the chosen design.
 
 
+\subsection{The Simple Algorithm} \label{sec:simple-algorithm} 
 
-\subsection{The Basic, Simple Algorithm} \label{sec:basic-algorithm}
+The first goal for this project is to implement the algorithm for detecting
+structural break points as mentioned in \cite{doerr2017a}. While that article
+quickly delves into optimizing the algorithm, the first priority for this
+project is having a working algorithm before a fast algorithm. Thus, the simple
+algorithm is the first to be implemented. 
 
-This building blocks for the basic, simple algorithm is this: An individual $X$
+The building blocks for the simple algorithm is this: An individual $X$
 is represented as a string with the same length as the time series $Y$ with
-length $T$, $|X| = T$, and $Y$ itself is represented as an array of $T$
-observations. The data structures themselves are very simple. 
+length $T$, $|X| = T$. $Y$ itself is represented as an array of $T$
+observations. The data structures themselves are simple arrays/strings. 
 
-The design of the algorithm is found in the handed out pseudo code. Thus,
-discussing the implementation and functionality of this code seems redundant.
-Especially given that all the procedures are explained in \cite{doerr2017a}. 
-
-What \textit{is} interesting about this design is the generality of it: A
+What is interesting about this design is the generality of it: A
 genetic algorithm is a very general tool. In the most simple of cases, the
-individuals manipulated are simple solution strings containing 1s and 0s - or
-other simple characters. The individual is thus a simple entity, and the value
+individuals manipulated are simple solution strings containing a few different 
+characters. The individual is thus a simple entity, and the value
 of it only becomes meaningful in the context of a given problem.
 
 In the context of finding structural break points with the rectangle fitness
-method, the genome of the individuals contains two types of alleles: \texttt{0}
-meaning no break point and \texttt{1} meaning a break point. Thus, the genome
+method, the genome of the individuals contains two types of alleles: \texttt{*}
+meaning no break point and \texttt{!} meaning a break point. Thus, the genome
 has $T$ genes, where each gene can contain one of two types of alleles. 
 
 This general and simple approach is alluring due to its simplicity. This is
@@ -38,10 +39,10 @@ to the length of the time series, there is a more efficient approach, see
 section~\ref{sec:optimized-algorithm}. 
 
 
+\subsection{Graphical User Interface, GUI} \label{sec:gui-design}
 
-\subsection{Graphical User Interface, GUI}
-
-For the design of the GUI, there are two key priorities: 1) Displaying the time
+With the simple algorithm taken care of, the results needs to be displayed. For 
+the design of the GUI, there are two key priorities: 1) Displaying the time
 series with break points and 2) being able to configure algorithm parameters. 
 
 While the implementation of displaying the graph and showing break points was incredibly tricky, see
@@ -254,7 +255,7 @@ implementing the range tree data type.
     \label{fig:uniform-crossover}
 \end{figure}
 
-\subsubsection{Range tree}
+\subsubsection{Range tree} \label{sec:range-tree-design}
 
 A range tree is a binary tree. Each node contains information about the following:
 \begin{itemize}
@@ -275,8 +276,16 @@ leaves and moving up.
 Construction the range tree starts at the root. The root has the interval
 $[0,T-1]$. The maximum and minimum values are the combination of the maximum and
 minimum of the two children which is calculated recursively. The left child get
-the index $[0, T/2]$ and the right child gets the index $[T/2 + 1, T]$. This
+the index $[0, \lfloor T/2 \rfloor]$ and the right child gets the index $[\lfloor
+T/2 \rfloor + 1, T ]$. This
 continues until the leaves where the minimum and maximum is set, resulting in
 all the previous nodes now being updated with their minimum and maximum. 
 
-\todo{Write about getting the min and max in a range}
+Constructing the tree from an array of $T$ observations takes 
+$O(T \log T)$ time. For large observation sets, this will slow down the
+algorithm a bit when initializing a time series. But the payoff is huge: Finding
+the minimum and maximum value inside an interval is much faster. In
+\cite{compstat14} the algorithm for finding min and max is explained. Here it is
+also concluded that the running time for a query is $O(\log T)$. This is much
+faster (especially for bigger time series) than $O(T)$ which the simple
+algorithm for finding min and max takes. 
