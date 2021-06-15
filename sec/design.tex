@@ -20,6 +20,8 @@ is represented as a string with the same length as the time series $Y$ with
 length $T$, $|X| = T$. $Y$ itself is represented as an array of $T$
 observations. The data structures themselves are simple arrays/strings. 
 
+\subsubsection{Simple approach reflections} \label{sec:simple-approach-refl}
+
 What is interesting about this design is the generality of it: A
 genetic algorithm is a very general tool. In the most simple of cases, the
 individuals manipulated are simple solution strings containing a few different 
@@ -33,10 +35,62 @@ has $T$ genes, where each gene can contain one of two types of alleles.
 
 This general and simple approach is alluring due to its simplicity. This is
 especially the case within the biological narrative of the genetic algorithm: A
-genome of fixed length and a small set of alleles matches the narrative. But for
-this problem, where the number of breakpoints is potentially miniscule compared
-to the length of the time series, there is a more efficient approach, see
-section~\ref{sec:optimized-algorithm}. 
+genome of fixed length and a small set of alleles matches the narrative. 
+
+The problem with this approach is speed: The number of breakpoints is potentially miniscule compared
+to the length of the time series. Going through $T$ elements is very
+inefficient if the number of elements of interest is much less. See
+section~\ref{sec:optimized-algorithm} for the optimized version. 
+
+\subsubsection{Break Point Algorithm Design}
+
+For the design of the algorithm, two design is split up into two factions:
+genetic algorithm and break point algorithm. In this way, the genetic algorithm
+becomes its own more general tool and the break point algorithm, which uses the
+genetic algorithm, makes the use more specific. 
+
+Saying the genetic algorithm part is a general tool is a stretch. This
+generality is discussed in section~\ref{sec:simple-approach-refl} and the notion
+turns almost nonsensical with the optimizations discussed in
+section~\ref{sec:optimized-algorithm}. Here the genetic algorithm elements are
+completely knowledgeable of the break points and their meaning. Thus, the
+genetic algorithm seizes to be general. \textit{But} in
+the design, these to factions are split apart. 
+
+In the genetic algorithm part, the individual is represented as a data type
+which can contain the location of break points and the model information for the
+fitness model. The genetic algorithm part is also responsible for the procedures
+generating offsprings. The individual might be aware of its fitness value, in
+any case the fitness model itself must be able to calculate the fitness of an
+individual. The comparison between individuals mostly takes place in the scope
+of a population which can return the individual with the highest fitness and
+replace the individual with the lowest fitness. The population also selects the
+two individuals for procedures. 
+
+The break point algorithm part is in charge of running the algorithm to find
+structural breaks. This part is mostly in charge of manipulating all the
+elements from the genetic algorithm part to get an outcome that makes sense.
+This means choosing randomly which procedure to generate a new offspring with
+and keeping charge of communicating with a population: Getting the two parents
+for procedures and replacing the offspring with the lowest fitness in the
+population.  
+
+A bonus part is the fitness methods. While this project only \textit{implements}
+one fitness method, the design opens up for further fitness methods. The fitness
+method must be its own element able to calculate the fitness of an individual
+and display the break points of the fittest individual. Thus, the fitness is a
+middle-man between the genetic algorithm and the break point algorithm. 
+
+The two (three) factions are illustrated in
+figure~\ref{fig:simple-design-structure}. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.8\textwidth]{fig/simple-design-structure.png}
+    \caption{A simple structure for the design and interface ideas for the program (without GUI)}
+    \label{fig:simple-design-structure}
+\end{figure}
+
 
 
 \subsection{Graphical User Interface, GUI} \label{sec:gui-design}
@@ -263,7 +317,7 @@ A range tree is a binary tree. Each node contains information about the followin
     \item A minimum $min$ and maximum $max$ value. 
 \end{itemize}
 For a given node, this means that for $a \leq b \leq T$, the interval
-$[y_a,y_b]$ has the minimum value $min$ and maximum value $max$. 
+$[y_a,y_b]$ has a minimum value $min$ and maximum value $max$. 
 
 For each node where $a \neq b$, the left child has the interval $[a, \lfloor
 (a+b)/2 \rfloor]$ and the right child has the interval $[\lceil
@@ -289,3 +343,5 @@ the minimum and maximum value inside an interval is much faster. In
 also concluded that the running time for a query is $O(\log T)$. This is much
 faster (especially for bigger time series) than $O(T)$ which the simple
 algorithm for finding min and max takes. 
+
+There is some optimization to be implemented in the query-algorithm. 

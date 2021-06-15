@@ -13,8 +13,7 @@ real world is far more messy. In figure~\ref{fig:covid19-dk-en},
 which shows the number of patients hospitalized in Denmark due to Covid19, the
 break points are less obvious. This is where detecting break points is
 important: Being able to recognize when the pattern changes, so that a pandemic
-does not run amok or looking for fluctuations in the stock market. \todo{Please
-find another example than the stock market}
+does not run amok or looking for fluctuations in the stock market. 
 
 In this project, the break points are found by using a so-called genetic
 algorithm. This algorithm mimics natural evolution: A number of individuals
@@ -28,8 +27,6 @@ the ability to tweak some of the algorithm's parameters and see the break points
 directly on the time series graph. Further improvements to the speed of the algorithm
 will also be implemented "under the hood". 
 
-\todo{Make the left figure more pretty!}
-
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
@@ -41,7 +38,9 @@ will also be implemented "under the hood".
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{fig/covid19-dk-en.jpg}
+        \raisebox{2.5mm}{
+            \includegraphics[width=\textwidth]{fig/covid19-dk-en.jpg}
+        }
         \caption{Source: The Danish Regions}
         \label{fig:covid19-dk-en}
     \end{subfigure}

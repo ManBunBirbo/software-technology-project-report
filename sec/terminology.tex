@@ -8,22 +8,36 @@ a bit from \\ \cite{doerr2017a}. It takes inspiration from other sources
 
 \begin{description}
 
-    \item[Individual] An individual consists of a solution string. It is one
-    possible solution to the problem. 
+    \item[Break point] Discussed and explained in
+    section~\ref{sec:introduction}. Also refereed to as \textit{structural
+    breaks}.
 
-    \item[Genome] An individual consists of a genome. A genome is an array of
-    genes. The genome \textit{is} the solution string. 
+    \item[Allele] An allele is an entity carrying the information of break
+    points. An allele stores the information about the location of a break point
+    and the model information relevant for a given fitness method. (See
+    explanation for fitness method a bit further down). 
 
-    \item[Allele] A gene's value is called an allele. In this project, the
-    allele is thus responsible for holding the information of whether or not a
-    certain gene is a break point. An allele is the value at a certain gene in
-    the genome/solution string. 
+    \item[Genome] A genome is an array of alleles. A \textit{gene} indicates the
+    index of an allele in the genome. A genome is analogous to an array of
+    integers like so:
+    \begin{verbatim}
+intArray[index] = integer
+genome[gene] = allele
+    \end{verbatim}
+
+    \item[Individual] An individual is a possible solution to the problem at
+    hand. The individual consists of a genome and possible other information
+    relevant for the genetic algorithm. 
 
     \item[Population] A group of individuals. 
 
     \item[Fitness function] A function that measures how well the solution from
     an individual fits with the data. This can be any function relevant for a
     particular problem. 
+
+    \item[Fitness method] The fitness function is dependant on the fitness
+    method. The method in this project is the rectangle method mentioned in
+    \cite{compstat14} and \cite{doerr2017a}. 
 
     \item[Parent and offspring individual] Since genetic algorithms mimic
     evolution, procedures must include parent and offspring individuals. A
@@ -47,7 +61,7 @@ a bit from \\ \cite{doerr2017a}. It takes inspiration from other sources
     the gene from parent two. 
 
     \item[Mutation (Procedure)] Just like the corona virus, the genome of an
-    individual can mutate. It means, that for any gene, there is a random chance
+    individual can mutate. It means that, for any gene, there is a random chance
     that the allele will change. In this case, the change will be either
     creating break points or removing them. 
 

@@ -7,8 +7,7 @@ language, the implementation and design choices reflect this.
 
 \subsection{Genetic algorithm Implementation}
 
-The smallest component in a genetic algorithm is the allele. The allele is the
-value at each gene in the genome. For the final implementation, the
+The smallest component in a genetic algorithm is the allele. For the final implementation, the
 allele class contains two fields: \texttt{index} representing the index of a
 break point and \texttt{methodBreakPoint} being of an abstract object
 \texttt{BreakPoint}. A break point is decided by the fitness method and thus
@@ -198,8 +197,9 @@ markers follows the scaling of the window, see figure~\ref{fig:gui-scaling}
     \hfill
     \begin{subfigure}[b]{.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{fig/gui-full-screen.png}
-        \hfill
+        \raisebox{7mm}{
+            \includegraphics[width=\textwidth]{fig/gui-full-screen.png}
+        }
         \caption{GUI in full screen, 2560 x 1600 pixels}
         \label{fig:gui-full-screen}
     \end{subfigure}
