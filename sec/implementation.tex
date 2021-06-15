@@ -57,6 +57,16 @@ The population class is also responsible for initializing itself with a number
 of random individuals as in the pseudo code. Here, it also assigns the fitness
 to the individuals. 
 
+See figure~\ref{fig:class-diagram-ga} for a class diagram of the elements in the
+genetic algorithm part/package. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.8\textwidth]{fig/class-diagram-ga.png}
+    \caption{Class diagram for the genetic algorithm elements}
+    \label{fig:class-diagram-ga}
+\end{figure}
+
 
 \subsection{Fitness methods} \label{sec:fitness-methods}
 
@@ -108,7 +118,9 @@ The algorithm for finding structural breaks is found in the class
 \texttt{BreakPointAlgorithm}. This is the brain of the system and the
 \textit{model} in model-view-controller. This class itself manipulates the other
 objects in a manner much like the handed out pseudo code. Thus, the
-implementation here is not very interesting. 
+implementation here is not very interesting. A class diagram of the break point
+algorithm together with time series and fitness models is shown in figure
+~\ref{fig:class-diagram-algorithm} in appendix~\ref{app:class-diagrams}.
 
 
 \subsection{GUI: Displaying the graph and break points}
@@ -122,6 +134,13 @@ designing the GUI a breeze.
 Writing GUI in FXML makes the separation of \textit{view} and
 \textit{controller} very apparent. The view is in the FXML language. The
 controller is in Java. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.8\textwidth]{fig/class-diagram-controller.png}
+    \caption{Class diagram for controller and main}
+    \label{fig:class-diagram-controller}
+\end{figure}
 
 The controller handles all the interactions from the user. This is methods like
 \texttt{openFileChooser} which opens the operating systems own file chooser to
@@ -206,3 +225,8 @@ markers follows the scaling of the window, see figure~\ref{fig:gui-scaling}
     \caption{GUI scaled from small to big (without rerunning algorithm)}
     \label{fig:gui-scaling}
 \end{figure}
+
+A class diagram for the controller part can be seen in
+figure~\ref{fig:class-diagram-controller}. 
+
+
