@@ -92,7 +92,7 @@ following:
 \end{description}
 
 
-\subsection{Loading the time series and range trees}
+\subsection{Loading the time series and range trees} \label{sec:loading-time-series}
 
 The time series data files are stored in the \textit{JSON} format. To load
 these, Googles Maven package \textit{JSON.simple} is used. That package has a
@@ -100,8 +100,35 @@ great \texttt{get}-method to retrieve information under a given string name, ie.
 \texttt{get("observations")} or \texttt{get("time")}. 
 
 For this project, when reading a data file with more than 1 dimension, an
-exception is thrown. For all data files with 1 dimension, the files are read
+exception is thrown and shown, see figure~\ref{fig:gui-dimension-error}.
+For all data files with 1 dimension, the files are read
 easily as JSON.simple handles the files very much like arrays. 
+
+An issue with the package was encountered when the data files were large, around
+500 MB. (100 MB files work fine). The JSON reader would simply not be able to go
+through the file and crash after a few minutes. Thus, if the file size exceeds
+120 MB, an error is thrown and shown to the user,
+see figure~\ref{fig:gui-file-size-error}. 120MB is a conservative limit but
+it should ensure no errors. 
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/gui-dimension-error.png}
+        \caption{Error popup when loading time series with multiple dimensions}
+        \label{fig:gui-dimension-error}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/gui-file-size-error.png}
+        \caption{Error popup when loading file with size > 120 MB}
+        \label{fig:gui-file-size-error}
+    \end{subfigure}
+    \caption{Errors to pop up when loading a time series with GUI}
+    \label{fig:gui-loading-errors}
+\end{figure}
 
 When all the data is loaded, the observation values are read into a range tree.
 This is a custom data structure implemented in Java. The range tree is
@@ -111,6 +138,73 @@ appendix~\ref{app:code-snippets}.
 
 In the implementations above, a \texttt{MinMax} object is used. This is a simple
 object to store a minimum and a maximum value. 
+
+\subsubsection{Non-implemented optimization for range trees}
+
+The run time for the range tree query algorithm can be optimized. As discussed
+in section~\ref{sec:range-tree-design}, the run time of the algorithm is $O(\log
+T)$. This must also be the lower bound $\Omega(\log T)$ as the the algorithm
+must always traverse the height of the tree $\log T$. While the run time of
+$O(\log T)$ will not be optimized, the lower bound will. 
+
+The new algorithm is based on the following principle: A node's minimum and
+maximum values are the combined values of the two children's values. Thus, if
+the query range completely matches the current node's range, the minimum and
+maximum value of \textit{that} node can be returned as the result. This is in
+stead of going to the leaf nodes having the singleton ranges of the two interval
+boundaries. For the new algorithm, the mergability property will also be used. 
+
+The new query algorithm must abide by the following rules where the algorithm is
+called with a query range and starts at the root:
+\begin{itemize}
+    \item For a given range query, there must be two paths down the tree, left
+    and right. In the beginning, these paths can be identical and the query
+    range will remain throughout this fase. 
+
+    For a query range $[x,y]$, at a node with range $[a,b]$, the path will
+    continue (only) left if $a \leq x \leq y \leq \lfloor (a+b) / 2
+    \rfloor$ or (only) right if $\lfloor (a+b) / 2 \rfloor + 1 \leq x \leq y \leq
+    b$. This rules applies both the paths are identical and after they have
+    split up. 
+
+    \item Given a query range $[x,y]$ and at
+    a node with range $[a,b]$ where $x \in [a,\lfloor (a+b) / 2 \rfloor]$ and $y
+    /in [\lfloor (a+b) / 2 \rfloor + 1,b]$ the two paths must split up. The left
+    path goes into the left child with query range $[x,\lfloor (a+b) / 2
+    \rfloor]$ and the right path goes into the right child with query range
+    $[\lfloor (a+b) / 2 \rfloor + 1,y]$. 
+
+    The algorithm combines the minimum and maximum values from the left path and
+    the right path. 
+
+    (Note that it is the \textit{query range} being updated in either path, not
+    the range of any node). 
+
+    \item Given a query range $[x,y]$ at a node with range $[a,b]$. If $x = a$
+    and $y = b$ then the minimum and maximum values of that node is returned. 
+\end{itemize}
+An example of the algorithm is included in
+appendix~\ref{app:range-tree-query}. 
+
+With the new algorithm, the lower bound for the algorithm becomes $\Omega(1)$.
+An easy example is a range query $[x,y]$ where the root node's range is itself
+$[x,y]$. Since the two ranges are the same, the algorithm immediately returns the
+minimum and maximum values stored in the root node since this \textit{is} the
+minimum and maximum in that entire interval. 
+
+The example above is of course very idealized. Usually, the two paths,
+left and right, will traverse the tree in a more chaotic manner. This means that
+the algorithm might still need to traverse the entire height of the tree, thus
+the run time still remains $O(\log T)$. 
+
+This algorithm is not implemented as the algorithm from
+section~\ref{sec:range-tree-design} works fine in the limited scope of this
+project. The time series are not \textit{that} big (due to data file restrictions
+mentioned in section~\ref{sec:loading-time-series}) and the fairly small amounts
+of break points. Implementing this was not a priority. 
+
+
+
 
 \subsection{The structural breaks algorithm}
 
@@ -178,6 +272,43 @@ work is needed: The math from section~\ref{sec:gui-design} is implemented also.
     \label{fig:gui-controls}
 \end{figure}
 
+Most of the sliders have fixed minimum and maximum value except the slider that
+determines the minimum distance between break points. This slider scales
+depending on the size of the time series. 
+\begin{lstlisting}
+int length = timeSeries.getLength();
+minDistanceSlider.setMax(Math.min(length, 10000));
+minDistanceSlider.setMin(Math.max(length / 200, 1));
+\end{lstlisting}
+This means that if the length $T$ of the time series $T < 1000$ then the maximum
+value for slider is set to $T$. On the other hand, if $T$ is very big, the
+minimum value for slider becomes $T / 200$. This changing of the minimum value
+is to ensure non-crazy runtimes for the algorithm. If the minimum distance
+between breakpoints is too low, the algorithm takes forever to run as the
+genomes become cluttered with break points which halts the execution time. This
+small fix eliminated that issue. 
+
+The slider for the maximum number of break points allows the user to choose a
+"don't know" value, "?". When selecting this value, all the individuals are
+initialized with a random number of break points between 1 and 20. In the code,
+this works by setting the maximum number of break points \texttt{kMax} to 0 and,
+in the initialization of an individual, setting the actual number of break
+points like so:
+\begin{lstlisting}
+int noOfBPs = kMax > 0 ? 1 + RAND.nextInt(kMax) : 2 + RAND.nextInt(19);
+\end{lstlisting}
+This must in turn also alter the penalty term in the fitness function. This is
+handled in the code like so (where \texttt{k = noOfBPs}):
+\begin{lstlisting}
+if (kMax > 0) {
+    penalty = Math.max(0., (kMax - k + 1.) / kMax);
+} else {
+    penalty = 1 / Math.sqrt(k);
+}
+\end{lstlisting}
+This was found to a nice feature when the number of break points is not clear
+from the graph itself. 
+
 The controller only makes one \textit{change} to the view: Replacing a
 placeholder \texttt{LineChart} with a custom \texttt{LineChart} object
 \texttt{DataGraph}. The reason to create a custom object is to draw the fitness
@@ -228,5 +359,4 @@ markers follows the scaling of the window, see figure~\ref{fig:gui-scaling}
 
 A class diagram for the controller part can be seen in
 figure~\ref{fig:class-diagram-controller}. 
-
 

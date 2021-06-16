@@ -10,12 +10,15 @@
 \begin{document}
 
     \input{frontpage.tex}
+    \clearpage
 
     % Add roman numerals to TOC-pages and Arabic numerals to all other pages
-    \pagenumbering{roman}
+    \thispagestyle{empty}
+    \setlength{\parskip}{0em}
     \tableofcontents
     \clearpage
-    \pagenumbering{arabic} \setcounter{page}{1}
+    \setcounter{page}{1}
+    \setlength{\parskip}{.5em}
 
     % Sub-files start
     \input{sec/introduction.tex}
