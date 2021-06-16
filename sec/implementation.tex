@@ -91,6 +91,29 @@ following:
     kind of \texttt{FitnessNode}. 
 \end{description}
 
+For the fitness, both penalty terms mentioned in \cite{doerr2017a} are included.
+The penalty term $p(k)$ is:
+\begin{align}
+    p(k) = \begin{cases}
+        1/k & \text{if} \, k_{max} = 0 \\
+        \text{max} \left \{ 0;\frac{k_{max} - k + 1}{k_{max}} \right \} & \text{if} \, k_{max} > 0 \\
+    \end{cases}
+\end{align}
+where $k$ is the current number of break points and $k_{max}$ is the maximum
+number of break points, set by the user. The other penalty term is for the
+number of break points violating a the minimum distance between break points.
+Here, the following factor is used:
+\begin{align}
+    1 - \frac{k_v}{k}
+\end{align}
+where $k_v$ is the number of break points violating the minimum distance. 
+
+In all, the fitness function $f(X)$ is:
+\begin{align}
+    f(X) = 1 - \frac{k_v}{k} (g(X) + \alpha p(k))
+\end{align}
+where $g(X)$ is the fitness of an individual $X$ determined by a given fitness
+model. 
 
 \subsection{Loading the time series and range trees} \label{sec:loading-time-series}
 
@@ -169,7 +192,7 @@ called with a query range and starts at the root:
 
     \item Given a query range $[x,y]$ and at
     a node with range $[a,b]$ where $x \in [a,\lfloor (a+b) / 2 \rfloor]$ and $y
-    /in [\lfloor (a+b) / 2 \rfloor + 1,b]$ the two paths must split up. The left
+    \in [\lfloor (a+b) / 2 \rfloor + 1,b]$ the two paths must split up. The left
     path goes into the left child with query range $[x,\lfloor (a+b) / 2
     \rfloor]$ and the right path goes into the right child with query range
     $[\lfloor (a+b) / 2 \rfloor + 1,y]$. 
@@ -205,7 +228,6 @@ of break points. Implementing this was not a priority.
 
 
 
-
 \subsection{The structural breaks algorithm}
 
 The algorithm for finding structural breaks is found in the class
@@ -215,6 +237,10 @@ objects in a manner much like the handed out pseudo code. Thus, the
 implementation here is not very interesting. A class diagram of the break point
 algorithm together with time series and fitness models is shown in figure
 ~\ref{fig:class-diagram-algorithm} in appendix~\ref{app:class-diagrams}.
+
+There is a small deviation from the pseudo code: A new population is initialized
+for each new run. This is not the case in the pseudo code where the algorithm
+can be run with an already initialized algorithm. 
 
 
 \subsection{GUI: Displaying the graph and break points}

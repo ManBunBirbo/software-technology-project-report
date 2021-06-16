@@ -38,14 +38,15 @@ especially the case within the biological narrative of the genetic algorithm: A
 genome of fixed length and a small set of alleles matches the narrative. 
 
 The problem with this approach is speed: The number of breakpoints is potentially miniscule compared
-to the length of the time series. Going through $T$ elements is very
+to the length $T$ of the time series. Going through $T$ elements is very
 inefficient if the number of elements of interest is much less. See
 section~\ref{sec:optimized-algorithm} for the optimized version. 
 
 \subsubsection{Break Point Algorithm Design}
 
-For the design of the algorithm, two design is split up into two factions:
-genetic algorithm and break point algorithm. In this way, the genetic algorithm
+For the design of the algorithm, the design is split up into three factions:
+\textit{genetic algorithm}, \textit{break point algorithm}, and \textit{fitness
+model}. In this way, the genetic algorithm
 becomes its own more general tool and the break point algorithm, which uses the
 genetic algorithm, makes the use more specific. 
 
@@ -55,7 +56,7 @@ turns almost nonsensical with the optimizations discussed in
 section~\ref{sec:optimized-algorithm}. Here the genetic algorithm elements are
 completely knowledgeable of the break points and their meaning. Thus, the
 genetic algorithm seizes to be general. \textit{But} in
-the design, these to factions are split apart. 
+the design, these two factions are split apart. 
 
 In the genetic algorithm part, the individual is represented as a data type
 which can contain the location of break points and the model information for the
@@ -75,22 +76,27 @@ and keeping charge of communicating with a population: Getting the two parents
 for procedures and replacing the offspring with the lowest fitness in the
 population.  
 
-A bonus part is the fitness methods. While this project only \textit{implements}
+While this project only \textit{implements}
 one fitness method, the design opens up for further fitness methods. The fitness
 method must be its own element able to calculate the fitness of an individual
 and display the break points of the fittest individual. Thus, the fitness is a
 middle-man between the genetic algorithm and the break point algorithm. 
 
-The two (three) factions are illustrated in
-figure~\ref{fig:simple-design-structure}. 
-
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=.8\textwidth]{fig/simple-design-structure.png}
+    \includegraphics[width=\textwidth]{fig/simple-design-structure.png}
     \caption{A simple structure for the design and interface ideas for the program (without GUI)}
     \label{fig:simple-design-structure}
 \end{figure}
 
+A fourth element, outside the strict realm of the algorithm, is \textit{time
+series}. For the algorithm to work it must have something to work \textit{on}. A
+time series is loaded here and the break point algorithm then uses the time
+series to make sense of the individuals, ie. calculating the fitness of an
+individual in relation to a given time series. 
+
+These four factions are illustrated in
+figure~\ref{fig:simple-design-structure}. 
 
 
 \subsection{Graphical User Interface, GUI} \label{sec:gui-design}
@@ -248,7 +254,7 @@ implementing the range tree data type.
     splitting point. From the first parent $P$, the offspring $O$ gets all genes
     $p$ with alleles $a_p = (b_p, B_p)$ where $b_p < i$. From the second parent
     $Q$, $O$ gets all genes $q$ with alleles $a_q = (b_q. B_q)$ where $b_q \geq
-    i$. The time complexity is $O(Size(P) + Size(Q))$.
+    i$. The time complexity is $O(|P| + |Q|))$.
     
     
     \item [Mutation] The mutation procedure is also simple, or at least
@@ -264,7 +270,8 @@ implementing the range tree data type.
     For the mutation procedure it might be possible that there exists multiple
     break points at one index. This is allowed and in stead affects the fitness
     score. If a break point is removed at index with multiple break points, only
-    one of the break points is removed. 
+    one of the break points is removed. This is dealt with using a penalty term,
+    discussed in section~\ref{sec:fitness-methods}.
     
     \todo{Explain the fitness thing somewhere else and link to that from here}
 
@@ -278,8 +285,8 @@ implementing the range tree data type.
     chance. The iteration parameter for that genome is incremented. If the two
     break point indexes are the same, a coin toss decides which allele is added
     to the offspring. Both counters are incremented afterward. This is repeated
-    until both genomes are traversed. The time complexity for this is $O(Size(P)
-    + Size(Q))$. 
+    until both genomes are traversed. The time complexity for this is $O(|P|
+    + |Q|)$. 
     
     Figure~\ref{fig:uniform-crossover} shows an example. The two parents $P$ and
     $Q$ have three and two break points in the interval respectively. The
@@ -343,5 +350,3 @@ the minimum and maximum value inside an interval is much faster. In
 also concluded that the running time for a query is $O(\log T)$. This is much
 faster (especially for bigger time series) than $O(T)$ which the simple
 algorithm for finding min and max takes. 
-
-There is some optimization to be implemented in the query-algorithm. 
