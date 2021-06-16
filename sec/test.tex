@@ -28,7 +28,42 @@ important that the break point indexes are in increasing order.
 For testing running times, a simple class \texttt{runTimeTimer} was made. It has
 two methods \texttt{start()} and \texttt{stop()}. \texttt{start()} must be called
 before the code chunk to be examined. \texttt{stop()} must be called just after.
-The running time will appear in milliseconds in the console. 
+The running time will appear in milliseconds in the console.
+
+\subsubsection{Optimization gains} \label{sec:optimization-gains}
+
+A test were performed where the break points was found using two different
+\texttt{getMinMax} methods. The first run was with the simple method of looping
+through an interval and the other run used range trees. 
+
+The test was performed on a time series with $10^6$ observations and the
+algorithm ran 30 times for each test. All the parameters of the algorithm was
+the same value across tests.
+
+In figure~\ref{fig:run-simple} the average run time for the simple min-max
+algorithm was $t_s = 434688 ms / 30 = 15000 ms$. With the range tree
+implementation, the average time is $t_r = 7229 ms / 30 = 241 ms$. Thus, the
+algorithm using range trees is $t_s / t_r = 60$ times faster for time series
+with one million data points. 
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}[b]{.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/run-simple.png}
+        \caption{Run with simple min max algorithm}
+        \label{fig:run-simple}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{fig/run-range-tree.png}
+        \caption{Run with range tree min max}
+        \label{fig:run-range-tree}
+    \end{subfigure}
+    \caption{The run time for finding break points with different min-max methods. Time is running the algorithm 30 times. The time series had length $T = 10^6$ and all runs were performed with the same parameter values.}
+    \label{fig:run-times}
+\end{figure}
 
 \subsection{The algorithm} \label{sec:test-the-algorithm}
 
