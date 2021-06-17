@@ -1,5 +1,6 @@
 % !TEX root = ../main.tex
 
+\clearpage
 \section{Problem analysis and design} \label{sec:analysis-design} 
 
 The main challenges are already hinted at in section~\ref{sec:goals}. All these
@@ -106,12 +107,13 @@ the design of the GUI, there are two key priorities: 1) Displaying the time
 series with break points and 2) being able to configure algorithm parameters. 
 
 While the implementation of displaying the graph and showing break points was incredibly tricky, see
-section~\ref{sec:graph-implementation}, the design itself is fairly easy: Show a
-graph and draw some rectangles/lines. The focus here is to make the graph area
+section~\ref{sec:graph-implementation}, the design itself is fairly easy: Show
+the time series as a
+graph and draw some rectangles/lines to indicate break points. The focus here is to make the graph area
 take up as much of the GUI as possible. This is achieved by being able to toggle
 the settings pane, see figure~\ref{fig:gui-toggle-ex}. 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.48\textwidth}
         \centering
@@ -141,7 +143,7 @@ series. These multiple points can be displayed in two ways: Taking the average
 of the measurements (figure~\ref{fig:gui-graph-avg}) or displaying the minimum
 and maximum (figure~\ref{fig:gui-graph-min-max}). 
 
-\begin{figure}[h]
+\begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.48\textwidth}
         \centering
@@ -272,8 +274,6 @@ implementing the range tree data type.
     score. If a break point is removed at index with multiple break points, only
     one of the break points is removed. This is dealt with using a penalty term,
     discussed in section~\ref{sec:fitness-methods}.
-    
-    \todo{Explain the fitness thing somewhere else and link to that from here}
 
     \item [Uniform crossover] The final procedure, uniform crossover, is a bit
     more complex in the new context. The uniform crossover takes two parents $P$
@@ -297,7 +297,8 @@ implementing the range tree data type.
         allele storing $p_1$ is added to the offspring with a fifty-fifty
         chance. Now $i$ is incremented so $i = 2$ 
         
-        \item $q_1 < p_2$. Allele storing $q_1$ is selected and $j$ is
+        \item $q_1 < p_2$. Allele storing $q_1$ is selected (added with
+        fifty-fifty chance) and $j$ is
         incremented $j = 2$. 
         
         \item $p_2 < q_2$: Allele storing $p_2$ is selected and $i$ is
@@ -320,17 +321,14 @@ implementing the range tree data type.
 
 A range tree is a binary tree. Each node contains information about the following:
 \begin{itemize}
-    \item An interval $[a,b]$ where $a \leq b$. 
+    \item An interval/range $[a,b]$ where $a \leq b$. 
     \item A minimum $min$ and maximum $max$ value. 
 \end{itemize}
-For a given node, this means that for $a \leq b \leq T$, the interval
-$[y_a,y_b]$ has a minimum value $min$ and maximum value $max$. 
-
 For each node where $a \neq b$, the left child has the interval $[a, \lfloor
 (a+b)/2 \rfloor]$ and the right child has the interval $[\lceil
 (a+b)/2 \rceil, b]$. The maximum and minimum of the node is the combined maximum
 and minimum of the two children. For leaves, the range is a singleton range
-$[c,c]$ and the minimum and maximum values are also the same. The minimum and
+$[c,c]$ and the minimum and maximum values are also the same, $min = max$. The minimum and
 maximum values for each node is thus calculated recursively starting from the
 leaves and moving up. 
 
@@ -340,7 +338,9 @@ minimum of the two children which is calculated recursively. The left child get
 the index $[0, \lfloor T/2 \rfloor]$ and the right child gets the index $[\lfloor
 T/2 \rfloor + 1, T ]$. This
 continues until the leaves where the minimum and maximum is set, resulting in
-all the previous nodes now being updated with their minimum and maximum. 
+all the previous nodes now being updated with their minimum and maximum. Setting
+the values in the leaves is simple: The range for leaf nodes is singleton and
+thus $min = max = T[a] = T[b]$. 
 
 Constructing the tree from an array of $T$ observations takes 
 $O(T \log T)$ time. For large observation sets, this will slow down the

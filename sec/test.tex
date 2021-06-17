@@ -1,5 +1,6 @@
 % !TEX root = ../main.tex
 
+\clearpage
 \section{Test} \label{sec:test}
 
 For this project, not many tests where performed. The tests where only for
@@ -64,6 +65,14 @@ with one million data points.
     \caption{The run time for finding break points with different min-max methods. Time is running the algorithm 30 times. The time series had length $T = 10^6$ and all runs were performed with the same parameter values.}
     \label{fig:run-times}
 \end{figure}
+
+Note that the running time is for the \textit{entire} break point algorithm and
+not just queries. 
+
+Unfortunately, these tests  were not performed after going from the simple
+arrays mentioned in section~\ref{sec:simple-algorithm} to the optimized arrays
+mentioned in section~\ref{sec:optimized-algorithm}. The more theoretical
+analysis of the run times will have to suffice. 
 
 \subsection{The algorithm} \label{sec:test-the-algorithm}
 

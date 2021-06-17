@@ -1,5 +1,6 @@
 % !TEX root = ../main.tex
 
+\clearpage
 \section{Implementation} \label{sec:implementation}
 
 The application is written in Java. Given that Java is an object-oriented
@@ -113,7 +114,9 @@ In all, the fitness function $f(X)$ is:
     f(X) = 1 - \frac{k_v}{k} (g(X) + \alpha p(k))
 \end{align}
 where $g(X)$ is the fitness of an individual $X$ determined by a given fitness
-model. 
+model. In this project, only one fitness method is implemented. That is the
+rectangle method from \cite{doerr2017a} and \cite{compstat14}. 
+
 
 \subsection{Loading the time series and range trees} \label{sec:loading-time-series}
 
@@ -121,11 +124,6 @@ The time series data files are stored in the \textit{JSON} format. To load
 these, Googles Maven package \textit{JSON.simple} is used. That package has a
 great \texttt{get}-method to retrieve information under a given string name, ie.
 \texttt{get("observations")} or \texttt{get("time")}. 
-
-For this project, when reading a data file with more than 1 dimension, an
-exception is thrown and shown, see figure~\ref{fig:gui-dimension-error}.
-For all data files with 1 dimension, the files are read
-easily as JSON.simple handles the files very much like arrays. 
 
 An issue with the package was encountered when the data files were large, around
 500 MB. (100 MB files work fine). The JSON reader would simply not be able to go
@@ -152,6 +150,11 @@ it should ensure no errors.
     \caption{Errors to pop up when loading a time series with GUI}
     \label{fig:gui-loading-errors}
 \end{figure}
+
+For this project, when reading a data file with more than 1 dimension, an
+exception is thrown and shown, see figure~\ref{fig:gui-dimension-error}.
+For all data files with 1 dimension, the files are read
+easily as JSON.simple handles the files very much like arrays. 
 
 When all the data is loaded, the observation values are read into a range tree.
 This is a custom data structure implemented in Java. The range tree is
@@ -181,14 +184,13 @@ The new query algorithm must abide by the following rules where the algorithm is
 called with a query range and starts at the root:
 \begin{itemize}
     \item For a given range query, there must be two paths down the tree, left
-    and right. In the beginning, these paths can be identical and the query
-    range will remain throughout this fase. 
+    and right. In the beginning, these paths can be identical. 
 
-    For a query range $[x,y]$, at a node with range $[a,b]$, the path will
+    \item For a query range $[x,y]$, at a node with range $[a,b]$, the path will
     continue (only) left if $a \leq x \leq y \leq \lfloor (a+b) / 2
     \rfloor$ or (only) right if $\lfloor (a+b) / 2 \rfloor + 1 \leq x \leq y \leq
     b$. This rules applies both the paths are identical and after they have
-    split up. 
+    split up. The query range is kept the same going into the child node. 
 
     \item Given a query range $[x,y]$ and at
     a node with range $[a,b]$ where $x \in [a,\lfloor (a+b) / 2 \rfloor]$ and $y
@@ -253,16 +255,17 @@ application \textit{SceneBuilder}. Styling has been done in CSS. Given the simpl
 scene has been designed as is ever in use. This has made 
 designing the GUI a breeze. 
 
-Writing GUI in FXML makes the separation of \textit{view} and
-\textit{controller} very apparent. The view is in the FXML language. The
-controller is in Java. 
-
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.8\textwidth]{fig/class-diagram-controller.png}
     \caption{Class diagram for controller and main}
     \label{fig:class-diagram-controller}
 \end{figure}
+
+
+Writing GUI in FXML makes the separation of \textit{view} and
+\textit{controller} very apparent. The view is in the FXML language. The
+controller is in Java. 
 
 The controller handles all the interactions from the user. This is methods like
 \texttt{openFileChooser} which opens the operating systems own file chooser to
@@ -350,20 +353,6 @@ display on the screen needed to be calculated. Then, the node has to be placed
 on the graph which, with the scale, was somewhat easy but took forever to get
 right.  
 
-At first, the markers was placed directly on the \texttt{LineChart} but it
-was changed to be placed on a \texttt{AnchorPane}. The decision to move to
-\texttt{AnchorPane} was motivated by one thing: The different type of
-nodes/figures in JavaFX has different parameters to decide the positioning. In
-an \texttt{AnchorPane}, the positions can be made to only $x$ and $y$. Thus, the
-fitness nodes must have an $x$ and $y$ position for upper left corner, and they
-must also have a width and height. For the fitness node itself, these values are
-in the scope of the time series. The transformation is done in
-\texttt{DataGraph} itself
-and is only graphical. 
-
-All this work payed off as the GUI is completely scalable and the fitness
-markers follows the scaling of the window, see figure~\ref{fig:gui-scaling}
-
 \begin{figure}[ht]
     \centering
     \begin{subfigure}[b]{.48\textwidth}
@@ -384,6 +373,20 @@ markers follows the scaling of the window, see figure~\ref{fig:gui-scaling}
     \caption{GUI scaled from small to big (without rerunning algorithm)}
     \label{fig:gui-scaling}
 \end{figure}
+
+At first, the markers was placed directly on the \texttt{LineChart} but it
+was changed to be placed on a \texttt{AnchorPane}. The decision to move to
+\texttt{AnchorPane} was motivated by one thing: The different type of
+nodes/figures in JavaFX has different parameters to decide the positioning. In
+an \texttt{AnchorPane}, the positions can be made to only $x$ and $y$. Thus, the
+fitness nodes must have an $x$ and $y$ position for upper left corner, and they
+must also have a width and height. For the fitness node itself, these values are
+in the scope of the time series. The transformation is done in
+\texttt{DataGraph} itself
+and is only graphical. 
+
+All this work payed off as the GUI is completely scalable and the fitness
+markers follows the scaling of the window, see figure~\ref{fig:gui-scaling}
 
 A class diagram for the controller part can be seen in
 figure~\ref{fig:class-diagram-controller}. 
